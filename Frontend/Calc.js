@@ -11,11 +11,9 @@ let bankCost = document.getElementById('BankCost');
 let tax = document.getElementById('Tax');
 let otherCost = document.getElementById('OtherCost');
 
-
 // Select the output field
 let MinProductCalc = document.getElementById('MinProductCalc');
 let MinSaleCalc = document.getElementById('MinSaleCalc');
-
 
 // Add event listener to the input fields
 costPrice.addEventListener('change', calculateAndDisplay);
@@ -31,65 +29,87 @@ bankCost.addEventListener('change', calculateAndDisplay);
 tax.addEventListener('change', calculateAndDisplay);
 otherCost.addEventListener('change', calculateAndDisplay);
 
-// Function to calculate the minimum products per day
-function calculateMinProductsPerDay(costPrice, shipping, chargeKlarna, adsDay, salePrice) {
 
-    // Convert percentages to decimal
-    let momsPercent = 25.0 / 100; // 25% moms
-    let klarnaAvgiftPercent = 2.99 / 100; // Convert percentage to decimal
 
-    // Calculate cost without VAT
-    let costWithoutVAT = costPrice / (1 + momsPercent);
+/*
 
-    // Calculate revenue without VAT
-    let revenueWithoutVAT = salePrice / (1 + momsPercent);
-
-    // Calculate profit without VAT
-    let profitWithoutVAT = revenueWithoutVAT - costWithoutVAT;
-
-    // Calculate Klarna fee
-    let klarnaFee = (salePrice * klarnaAvgiftPercent) + 3.50;
-
-    // Calculate profit including Klarna fee
-    let profitWithKlarna = profitWithoutVAT - klarnaFee;
-
-    // Tax rate (40% tax)
-   let taxRate = 40.0 / 100; // 40% tax
-
-    // Calculate tax
-    let tax = profitWithKlarna * taxRate;
-
-    // Calculate number of products needed to break even
-    let productsForBreakEven = Math.ceil(adsDay / profitWithKlarna);
-
-    // Calculate total profit after marketing
-    /*let totalProfitAfterMarketing = Math.ceil(productsForBreakEven * profitWithKlarna - adsDay);
-*/
-
-   /* let profit = salePrice - costPrice;
-    let totalProfitAfterMarketing = Math.ceil(adsDay / profit);
-    
-*/
-
-// Convert the number to a string and append "st"
-let result = productsForBreakEven.toString() + "st";
-    // Return the result
-    return result;
-
-    
+function percentageToDecimal(percentage) {
+    return percentage / 100;
 }
 
+function calculateCostWithoutVAT(costPrice, momsPercent) {
+    return costPrice / (1 + momsPercent);
+}
 
-function calculateMinSalesValue( costPrice, shipping, chargeKlarna, adsDay, salePrice, productsForBreakEven) {
+// Utility function to calculate revenue without VAT
+function calculateRevenueWithoutVAT(salePrice, momsPercent) {
+    return salePrice / (1 + momsPercent);
+}
 
-    // Calculate the minimum sales value
-    let minSalesValue = calculateMinProductsPerDay * salePrice;
+// Utility function to calculate profit without VAT
+function calculateProfitWithoutVAT(revenueWithoutVAT, costWithoutVAT) {
+    return revenueWithoutVAT - costWithoutVAT;
+}
+*/
+// Utility function to calculate profit
+function calculateProfit(salePrice, costPrice) {
+    return salePrice - costPrice;
+}
 
+// Utility function to calculate Klarna fee
+function calculateKlarnaFee(salePrice) {
+    return (salePrice * 0.0299) + 3.50;}
+
+// Utility function to calculate profit including Klarna fee
+function calculateProfitWithKlarna(profit, klarnaFee) {
+    return profit - klarnaFee;
+}
+
+// Utility function to calculate the number of products needed to break even
+function calculateProductsForBreakEven(adsDay, profitWithKlarna) {
+    return Math.ceil(adsDay / profitWithKlarna);
+}
+
+// Global variable to store the actual number of products needed to break even
+ function calculateActualProductsNeeded(adsDay, profitWithKlarna) {
+   return adsDay / profitWithKlarna;  
+ }
+
+
+// Function to calculate the minimum products per day
+function calculateMinProductsPerDay(costPrice, shipping, chargeKlarna, adsDay, salePrice) {
+    // Calculate profit
+    let profit = calculateProfit(salePrice, costPrice);
+
+    // Calculate Klarna fee
+    let klarnaFee = calculateKlarnaFee(salePrice, chargeKlarna);
+
+    // Calculate profit including Klarna fee
+    let profitWithKlarna = calculateProfitWithKlarna(profit, klarnaFee);
+
+    // Calculate the actual number of products needed to break even
+    let productsForBreakEven = calculateProductsForBreakEven(adsDay, profitWithKlarna);
+
+    // Return the number of products and profit with Klarna
+    return { productsForBreakEven, profitWithKlarna };
+}
+
+// Function to calculate the minimum sales value per day
+function calculateMinSalesValue(adsDay, salePrice, profitWithKlarna) {
+    // Calculate the actual number of products needed to break even without rounding up
+    let actualProductsNeeded = adsDay / profitWithKlarna;
+
+    // Calculate the minimum sales value needed to cover all costs
+    let minSalesValue = actualProductsNeeded * salePrice;
+
+    // Return the minimum sales value
     return minSalesValue;
 }
 
+
 // Function to calculate and display the result
 function calculateAndDisplay() {
+
     // Get the values of the input fields
     let costPriceValue = parseFloat(costPrice.value);
     let shippingValue = parseFloat(shipping.value);
@@ -98,115 +118,17 @@ function calculateAndDisplay() {
     let salePriceValue = parseFloat(salePrice.value);
 
     // Call the function with the input values
-    let ProductResult = calculateMinProductsPerDay(costPriceValue, shippingValue, chargeKlarnaValue, adsDayValue, salePriceValue);
-    let SaleResult = calculateMinSalesValue(costPriceValue, shippingValue, chargeKlarnaValue, adsDayValue, salePriceValue);
+    let { productsForBreakEven, profitWithKlarna } = calculateMinProductsPerDay(costPriceValue, shippingValue, chargeKlarnaValue, adsDayValue, salePriceValue);
+    let minSalesValue = calculateMinSalesValue(adsDayValue, salePriceValue, profitWithKlarna);
+
+    let resultProduct = productsForBreakEven.toString() + "st";
+    let minSale = minSalesValue.toFixed(2) + "kr";
+
     // Set the value of the output field
-    MinProductCalc.innerText = ProductResult;
-    MinSaleCalc.innerText = SaleResult;
+    MinProductCalc.innerText = resultProduct;
+    MinSaleCalc.innerText = minSale;
+
+
+
+    //is github updated?
 }
-
-/*
-}
-
-
-}
-
-// Select the input fields
-// Select the output fields
-let minProductCalc = document.getElementById('MinProductCalc');
-let profitDayCalc = document.getElementById('Profit/dayCalc');
-let profitMonthCalc = document.getElementById('Profit/monthCalc');
-let profitProductCalc = document.getElementById('Profit/productCalc');
-let vatProductCalc = document.getElementById('Vat/productCalc');
-let chargesMonthCalc = document.getElementById('Charges/monthCalc');
-let taxProductCalc = document.getElementById('Tax/productCalc');
-let monthlyCostCalc = document.getElementById('MonthlyCostCalc');
-
-
-// Select the output field and the button
-let outputField = document.getElementById('MinProductCalc');
-let calculateButton = document.getElementById('calculateButton');
-
-// Event listener for the button
-calculateButton.addEventListener('click', calculateAndDisplay);
-
-
-
-
-
-
-
-// Function to calculate and display the result
-function calculateAndDisplay() {
-    // Get the values of the input fields
-    let costPriceValue = parseFloat(costPrice.value);
-    let shippingValue = parseFloat(shipping.value);
-    let chargeKlarnaValue = parseFloat(chargeKlarna.value);
-    let adsDayValue = parseFloat(adsDay.value);
-    let salePriceValue = parseFloat(salePrice.value);
-
-    // Call the function with the input values
-    let result = calculateMinProductsPerDay(costPriceValue, shippingValue, chargeKlarnaValue, adsDayValue, salePriceValue);
-
- 
-// Set the value of the output fields
-minProductCalc.innerText = result;
-profitDayCalc.innerText = profitDay;
-profitMonthCalc.innerText = profitMonth;
-profitProductCalc.innerText = profitProduct;
-vatProductCalc.innerText = vatProduct;
-chargesMonthCalc.innerText = chargesMonth;
-taxProductCalc.innerText = taxProduct;
-monthlyCostCalc.innerText = monthlyCost;
-
-
-}
-
-
-
-
-
-// Add event listeners to the input fields
-costPrice.addEventListener('change', calculateAndDisplay);
-shipping.addEventListener('change', calculateAndDisplay);
-chargeKlarna.addEventListener('change', calculateAndDisplay);
-adsDay.addEventListener('change', calculateAndDisplay);
-salePrice.addEventListener('change', calculateAndDisplay);
-
-
-
-function calculateMinProductsPerDay(costPrice, shipping, chargeKlarna, adsDay, salePrice) {
-    // Convert percentages to decimal
-    let momsPercent = 25.0 / 100; // 25% moms
-    let klarnaAvgiftPercent = 2.99 / 100; // Convert percentage to decimal
-
-    // Calculate cost without VAT
-    let costWithoutVAT = costPrice / (1 + momsPercent);
-
-    // Calculate revenue without VAT
-    let revenueWithoutVAT = salePrice / (1 + momsPercent);
-
-    // Calculate profit without VAT
-    let profitWithoutVAT = revenueWithoutVAT - costWithoutVAT;
-
-    // Calculate Klarna fee
-    let klarnaFee = (salePrice * klarnaAvgiftPercent) + 3.50;
-
-    // Calculate profit including Klarna fee
-    let profitWithKlarna = profitWithoutVAT - klarnaFee;
-
-    // Tax rate (40% tax)
-    let taxRate = 40.0 / 100; // 40% tax
-
-    // Calculate tax
-    let tax = revenueWithoutVAT * taxRate;
-
-    // Calculate number of products needed to break even
-    let productsForBreakEven = Math.ceil(adsDay / profitWithKlarna);
-
-    // Calculate total profit after marketing
-    let totalProfitAfterMarketing = productsForBreakEven * profitWithKlarna - adsDay;
-
-
-}
-*/
