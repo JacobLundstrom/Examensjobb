@@ -6,10 +6,10 @@ let chargeKlarna = document.getElementById('ChargeKlarna');
 let adsDay = document.getElementById('Ads-Day');
 let totalSale = document.getElementById('TotalSale');
 let totalAd = document.getElementById('TotalAd');
-let accountant = document.getElementById('Accountant');
+let accountantCost = document.getElementById('AccountantCost');
 let shopifyCost = document.getElementById('ShopifyCost');
 let bankCost = document.getElementById('BankCost');
-let tax = document.getElementById('Tax');
+let bookkeepingCost = document.getElementById('BookKeepingCost');
 let otherCost = document.getElementById('OtherCost');
 //#endregion
 
@@ -20,24 +20,11 @@ let ProfitProductCalc = document.getElementById('ProfitProductCalc'); // Output 
 let ProfitDayCalc = document.getElementById('ProfitDayCalc'); // Output field for daily profit
 let ProfitMonthCalc = document.getElementById('ProfitMonthCalc'); // Output field for monthly profit
 let MomsProductCalc = document.getElementById('MomsProductCalc'); // Output field for moms per product
-
-
+let ChargesMonthCalc = document.getElementById('ChargesMonthCalc');
 //#endregion
 
-//#region Calculate and display functions
-costPrice.addEventListener('change', calculateAndDisplay);
-salePrice.addEventListener('change', calculateAndDisplay);
-shipping.addEventListener('change', calculateAndDisplay);
-chargeKlarna.addEventListener('change', calculateAndDisplay);
-adsDay.addEventListener('change', calculateAndDisplay);
-totalSale.addEventListener('change', calculateAndDisplay);
-totalAd.addEventListener('change', calculateAndDisplay);
-accountant.addEventListener('change', calculateAndDisplay);
-shopifyCost.addEventListener('change', calculateAndDisplay);
-bankCost.addEventListener('change', calculateAndDisplay);
-tax.addEventListener('change', calculateAndDisplay);
-otherCost.addEventListener('change', calculateAndDisplay);
-//#endregion
+
+
 
 // Utility function to calculate profit
 function calculateProfit(salePrice, costPrice, shipping) {
@@ -105,6 +92,19 @@ function calculateMinSalesValue(adsDay, salePrice, profitWithKlarna) {
     return minSalesValue;
 }
 
+// Function to calculate the total monthly charges
+function calculateTotalMonthlyCharges() {
+    let accountantCostValue = parseFloat(accountantCost.value) ||  0;
+    let shopifyCostValue = parseFloat(shopifyCost.value) ||  0;
+    let bankCostValue = parseFloat(bankCost.value) ||  0;
+    let bookkeepingCostValue = parseFloat(bookkeepingCost.value) ||  0;
+    let otherCostValue = parseFloat(otherCost.value) ||  0;
+
+    let totalMonthlyCharges = accountantCostValue + shopifyCostValue + bankCostValue + bookkeepingCostValue + otherCostValue;
+    return totalMonthlyCharges;
+}
+
+
 // Function to calculate and display the result
 function calculateAndDisplay() {
     let costPriceValue = parseFloat(costPrice.value);
@@ -121,6 +121,8 @@ function calculateAndDisplay() {
     let productsForBreakEven = calculateProductsForBreakEven(adsDayValue, profitWithKlarna);
     let minSalesValue = calculateMinSalesValue(adsDayValue, salePriceValue, profitWithKlarna);
     let momsValue = calculateVAT(salePriceValue);
+    let totalMonthlyCharges = calculateTotalMonthlyCharges();
+
 
     // Calculate the total sales with shipping (if applicable)
     let totalSalesWithShipping = calculateTotalSalesWithShipping(totalSaleValue, shippingValue);
@@ -141,6 +143,7 @@ function calculateAndDisplay() {
     let ProfitPerDay = dailyProfit.toFixed(2) + " kr";
     let ProfitPerMonth = monthlyProfit.toFixed(2) + " kr";
     let MomsPerProduct = momsValue.toFixed(2) + " kr";
+    let totalMonthlyChargesFormatted = totalMonthlyCharges.toFixed(2) + " kr";
 
     // Display the result in the output field
     ProfitProductCalc.innerText = ProfitPerProduct;
@@ -149,6 +152,7 @@ function calculateAndDisplay() {
     ProfitDayCalc.innerText = ProfitPerDay;
     ProfitMonthCalc.innerText = ProfitPerMonth;
     MomsProductCalc.innerText = MomsPerProduct;
+    ChargesMonthCalc.innerText = totalMonthlyChargesFormatted;
 
     // Log to the console for debugging
     console.log("Profit Per Product:", ProfitPerProduct);
@@ -156,7 +160,8 @@ function calculateAndDisplay() {
     console.log("Minimum Sales Value:", minSale);
     console.log("Daily Profit:", ProfitPerDay);
     console.log("Monthly Profit:", ProfitPerMonth);
-
+    console.log("Moms Per Product:", MomsPerProduct);
+    console.log("Monthly Charges:", totalMonthlyChargesFormatted);
 }
 
 //event listeners to trigger the calculation when input values change
@@ -167,6 +172,12 @@ chargeKlarna.addEventListener('change', calculateAndDisplay);
 adsDay.addEventListener('change', calculateAndDisplay);
 totalSale.addEventListener('change', calculateAndDisplay);
 totalAd.addEventListener('change', calculateAndDisplay);
+accountantCost.addEventListener('change', calculateAndDisplay);
+shopifyCost.addEventListener('change', calculateAndDisplay);
+bankCost.addEventListener('change', calculateAndDisplay);
+bookkeepingCost.addEventListener('change', calculateAndDisplay);
+otherCost.addEventListener('change', calculateAndDisplay);
+
 
 calculateAndDisplay();
 
