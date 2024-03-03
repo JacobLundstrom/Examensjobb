@@ -113,6 +113,99 @@ function calculateTotalMonthlyCharges() {
 }
 
 
+// Function to save a calculation to history
+function saveCalculation(inputValues, results) {
+    let history = JSON.parse(localStorage.getItem('calculationHistory')) || [];
+    history.push({ inputValues, results });
+    localStorage.setItem('calculationHistory', JSON.stringify(history));
+}
+
+// Function to load the calculation history from local storage
+function loadCalculationHistory() {
+    return JSON.parse(localStorage.getItem('calculationHistory')) || [];
+}
+
+
+const inputLabels = {
+    CostPrice: 'Inköpspris',
+    SalePrice: 'Försäljningspris',
+    Shipping: 'Frakt',
+    'Ads-Day': 'Marknadsföringskostnad per dag',
+    TotalSale: 'Total försäljning/mån',
+    TotalAd: 'Total marknadsföring/mån',
+    AccountantCost: 'Revisorkostnad/mån',
+    ShopifyCost: 'Shopify kostnad/mån',
+    BankCost: 'Bank kostnad/mån',
+    BookKeepingCost: 'Bokföringskostnad/mån',
+    OtherCost: 'Övriga kostnader/mån'
+};
+
+const outputLabels = {
+    profitPerProduct: 'Vinst per produkt',
+    minProductsPerDay: 'Minimum produkter per dag',
+    minSalesValue: 'Minimum försäljningsvärde per dag',
+    dailyProfit: 'Vinst per dag',
+    monthlyProfit: 'Vinst per månad',
+    momsPerProduct: 'Moms per produkt',
+    totalMonthlyCharges: 'Totala månadskostnader'
+};
+
+
+// Function to display the history table
+function displayHistoryTable() {
+    const history = loadCalculationHistory();
+    const tableContainer = document.getElementById('historyTableContainer');
+    tableContainer.innerHTML = '';
+
+    const table = document.createElement('table');
+    table.id = 'historyTable';
+    const headerRow = document.createElement('tr');
+    const inputHeader = document.createElement('th');
+    const outputHeader = document.createElement('th');
+
+    inputHeader.textContent = 'Input Values';
+    outputHeader.textContent = 'Output Values';
+    headerRow.appendChild(inputHeader);
+    headerRow.appendChild(outputHeader);
+    table.appendChild(headerRow);
+
+    history.forEach(calc => {
+        const row = document.createElement('tr');
+        const inputCell = document.createElement('td');
+        const outputCell = document.createElement('td');
+
+        //list of input values using hardcoded labels
+        let inputValuesList = document.createElement('ul');
+        for (const [key, value] of Object.entries(calc.inputValues)) {
+            let labelText = inputLabels[key] || key; 
+            let listItem = document.createElement('li');
+            listItem.textContent = `${labelText}: ${value}`;
+            inputValuesList.appendChild(listItem);
+        }
+        inputCell.appendChild(inputValuesList);
+
+        //list of output values using hardcoded labels
+        let outputValuesList = document.createElement('ul');
+        for (const [key, value] of Object.entries(calc.results)) {
+            let labelText = outputLabels[key] || key; 
+            let listItem = document.createElement('li');
+            listItem.textContent = `${labelText}: ${value}`;
+            outputValuesList.appendChild(listItem);
+        }
+        outputCell.appendChild(outputValuesList);
+
+        row.appendChild(inputCell);
+        row.appendChild(outputCell);
+        table.appendChild(row);
+    });
+
+    tableContainer.appendChild(table);
+}
+
+
+
+
+
 
 // Function to calculate and display the result
 function calculateAndDisplay() {
@@ -186,6 +279,58 @@ function calculateAndDisplay() {
     console.log("min Sales Value:", minSalesValue);
 }
 
+
+
+
+// Function to save the current calculation to history
+function saveCurrentCalculationToHistory() {
+    // Gather the current input values and results
+    const inputValues = {
+        CostPrice: parseFloat(costPrice.value),
+        SalePrice: parseFloat(salePrice.value),
+        Shipping: parseFloat(shipping.value),
+        'Ads-Day': parseFloat(adsDay.value),
+        TotalSale: parseFloat(totalSale.value),
+        TotalAd: parseFloat(totalAd.value),
+        AccountantCost: parseFloat(accountantCost.value),
+        ShopifyCost: parseFloat(shopifyCost.value),
+        BankCost: parseFloat(bankCost.value),
+        BookKeepingCost: parseFloat(bookkeepingCost.value),
+        OtherCost: parseFloat(otherCost.value)
+    };
+    const results = {
+        profitPerProduct: ProfitProductCalc.innerText,
+        minProductsPerDay: MinProductCalc.innerText,
+        minSalesValue: MinSaleCalc.innerText,
+        dailyProfit: ProfitDayCalc.innerText,
+        monthlyProfit: ProfitMonthCalc.innerText,
+        momsPerProduct: MomsProductCalc.innerText,
+        totalMonthlyCharges: ChargesMonthCalc.innerText
+    };
+
+    // Save the current calculation to history
+    saveCalculation(inputValues, results);
+
+    // Update the history table
+    displayHistoryTable();
+}
+
+// Add an event listener for the "Save to History" button
+document.getElementById('saveToHistoryBtn').addEventListener('click', saveCurrentCalculationToHistory);
+
+
+// Function to clear the calculation history
+function clearCalculationHistory() {
+    // Clear the calculation history from local storage
+    localStorage.removeItem('calculationHistory');
+
+    // Update the history table to reflect the cleared history
+    displayHistoryTable();
+}
+
+// Add an event listener for the "Clear History" button
+document.getElementById('clearHistoryBtn').addEventListener('click', clearCalculationHistory);
+
 // Event listeners to trigger the calculation when input values change
 costPrice.addEventListener('change', calculateAndDisplay);
 salePrice.addEventListener('change', calculateAndDisplay);
@@ -202,3 +347,5 @@ otherCost.addEventListener('change', calculateAndDisplay);
 // Initial calculation
 calculateAndDisplay();
 
+// Call displayHistoryTable when the page loads to show any existing history
+displayHistoryTable();

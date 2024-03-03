@@ -21,6 +21,7 @@ html{
     overflow: hidden;
     padding-left: 4%;
     padding-right: 4%;
+    padding-bottom: 20px;
   }
   
   .left-side
@@ -95,4 +96,73 @@ html{
   background-color: #212020;
   color: lightgray;
   border-radius: 10px;
+}
+
+.Output label{
+  padding-top : 15px;
+  margin-bottom: 15px;
+}
+
+.history {
+  padding-top: 20px;
+  padding-bottom: 0%;
+}
+.history button {
+  display: inline-block;
+  padding: 20px 20px;
+  margin-left: 50px ;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: grey;
+}
+
+#historyTableContainer {
+  margin-top: 20px;
+  background-color: #212020;
+  padding: 0% 20px 20px 20px;
+  border-radius: 10px; 
+
+ }
+ 
+ #historyTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #0c0c0d;
+  color: lightgray; 
+  font-size: large;
+ }
+ 
+ #historyTable th, #historyTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  padding-left: 15%;
+ }
+ 
+ #historyTable th {
+  background-color: #0c0c0d;
+  color: lightgray;
+  padding-left: 20%;
+ }
+ 
+ #historyTable tr:nth-child(even) {
+  background-color: #212020; 
+  color: lightgray;
+ }
+ 
+
+
+ 
+
+ 
+
+::-webkit-scrollbar {
+  width: 11px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #6c757d;
+  border-radius: 6px; 
 }
