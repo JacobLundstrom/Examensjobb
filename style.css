@@ -4,7 +4,6 @@ html{
 .banner {
   display: flex;
   justify-content: center;
-  align-items: center;
   padding: 7px;
 }
 
@@ -69,7 +68,7 @@ html{
 
   .right-side 
   {
-    background-color: 5a5b5f;
+    background-color: #5a5b5f;
     padding-left: 0%;
     height: 100%;
     overflow-y: auto;
@@ -82,6 +81,7 @@ html{
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     padding: 20px;   
+    background-color: #0c0c0d;
 }
 
 .Output div {
@@ -101,6 +101,7 @@ html{
 .Output label{
   padding-top : 15px;
   margin-bottom: 15px;
+  padding-left: 5px;
 }
 
 .history {
@@ -123,7 +124,6 @@ html{
   background-color: #212020;
   padding: 0% 20px 20px 20px;
   border-radius: 10px; 
-
  }
  
  #historyTable {
@@ -138,13 +138,15 @@ html{
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
-  padding-left: 15%;
+  word-wrap: break-word;
  }
- 
+  
+
+
  #historyTable th {
   background-color: #0c0c0d;
   color: lightgray;
-  padding-left: 20%;
+  text-align: center;
  }
  
  #historyTable tr:nth-child(even) {
@@ -152,12 +154,6 @@ html{
   color: lightgray;
  }
  
-
-
- 
-
- 
-
 ::-webkit-scrollbar {
   width: 11px;
 }
@@ -165,4 +161,48 @@ html{
 ::-webkit-scrollbar-thumb {
   background-color: #6c757d;
   border-radius: 6px; 
+}
+
+.Intro-text {
+  color: lightgray;
+  font-size: 1.5rem;
+  padding: 20px;
+  width: 70%;
+  margin: auto;
+  line-height: 1.4;
+}
+
+.Intro-text h1{
+  margin: auto;
+  text-align: center;
+  font-size: 2.2rem;
+}
+
+
+
+
+@media (max-width: 700px) {
+  .Output {
+    display: block;
+  }
+  
+  .Output div {
+    margin-bottom: 10px;
+  }
+
+  
+
+}
+
+@media (max-width: 640px) {
+.banner{
+  display: none;
+  }
+}
+
+@media (max-width: 300px) {
+  #historyTableContainer {
+    width: 60%;
+    background-color: orange;
+  }
 }
