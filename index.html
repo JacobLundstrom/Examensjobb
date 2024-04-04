@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <title>E-handel</title>
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
@@ -9,6 +10,15 @@
 <header>
   <div class="banner">
     <img src="img/calc.png" alt="Banner bild">
+  </div>
+  <div class="Intro-text">
+
+    <h1>Välkommen till e-handelskalkylatorn!</h1>
+    <p>
+      Denna kalkylator är ett verktyg som hjälper dig att beräkna olika ekonomiska parametrar för din e-handelsverksamhet. Med hjälp av denna kalkylator kan du snabbt och enkelt
+       få insikt i din försäljningsvinst, månatliga kostnader och önskad vinstnivå.
+      <br><br><span style="font-weight: bold; color: #20BC63;">Vänligen observera att för närvarande är moms och skatter inte inkluderade i de beräkningar som för närvarande utförs av kalkylatorn. </span>
+    </p>
   </div>
 </header>
 <body>
@@ -34,28 +44,39 @@
                 <input type="text" id="Shipping">
               </div>
 
+
+              <div class="WishedProfit">
+                <label for="WhisedProfitOption">Önskad vinst % per produkt</label>
+                <input type="text" id="WishedProfit">
+              </div>
+          
               <div class="Ads-Day">
                 <label for="Ads-Day">Marknadsföringskostnad per dag</label>
                 <input type="text" id="Ads-Day">
               </div>
 
+              <div class="DailySalesEstimate">
+                <label for="DailySalesEstimate">Uppskattat antal produkter/dag</label>
+                <input type="text" id="DailySalesEstimate">
+               </div>               
+
               <div class="TotalSale">
-                <label for="TotalSale">Total försäljning/månad</label>
+                <label for="TotalSale">Total försäljning/mån</label>
                 <input type="text" id="TotalSale">
               </div>
               
               <div class="TotalAd">
-                <label for="TotalAd">Total marknadsföring/månad</label>
+                <label for="TotalAd">Total marknadsföring/mån</label>
                 <input type="text" id="TotalAd">
               </div>
 
               <div class="AccountantCost">
-                <label for="Accountant">Revisorkostnad/månad</label>
+                <label for="Accountant">Revisorkostnad/mån</label>
                 <input type="text" id="AccountantCost">
               </div>
 
               <div class="ShopifyCost">
-                <label for="ShopifyCost">Shopify kostnad/månad</label>
+                <label for="ShopifyCost">Webbleverantör kostnad/mån</label>
                 <input type="text" id="ShopifyCost">
               </div>
 
@@ -105,12 +126,17 @@
               <label for="Charges/month">Avgifter/Månad</label>
               <div id="ChargesMonthCalc"></div>
           </div>
+
+          <div id="WhisedProfit">
+              <label for="WhisedProfit">Försäljningspris för önskad vinst</label>
+              <div id="WishedProfitCalc"></div>
+          </div>
       </div>
    </div>  
   </div>
     <div class="history">
-      <button id="saveToHistoryBtn">Save to History</button>
-      <button id="clearHistoryBtn">Clear History</button>
+      <button id="saveToHistoryBtn">Spara till historik</button>
+      <button id="clearHistoryBtn">Rensa historik</button>
       <div id="historyTableContainer"></div>
     </div>
 </div>

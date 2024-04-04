@@ -2,7 +2,9 @@
 let costPrice = document.getElementById('CostPrice');
 let salePrice = document.getElementById('SalePrice');
 let shipping = document.getElementById('Shipping');
+let wishedProfit = document.getElementById('WishedProfit');
 let adsDay = document.getElementById('Ads-Day');
+let dailySalesEstimate = document.getElementById('DailySalesEstimate');
 let totalSale = document.getElementById('TotalSale');
 let totalAd = document.getElementById('TotalAd');
 let accountantCost = document.getElementById('AccountantCost');
@@ -15,11 +17,12 @@ let otherCost = document.getElementById('OtherCost');
 //#region Select the output field
 let MinProductCalc = document.getElementById('MinProductCalc');
 let MinSaleCalc = document.getElementById('MinSaleCalc');
-let ProfitProductCalc = document.getElementById('ProfitProductCalc'); // Output field for profit per product
-let ProfitDayCalc = document.getElementById('ProfitDayCalc'); // Output field for daily profit
-let ProfitMonthCalc = document.getElementById('ProfitMonthCalc'); // Output field for monthly profit
-let MomsProductCalc = document.getElementById('MomsProductCalc'); // Output field for moms per product
+let ProfitProductCalc = document.getElementById('ProfitProductCalc');
+let ProfitDayCalc = document.getElementById('ProfitDayCalc');
+let ProfitMonthCalc = document.getElementById('ProfitMonthCalc');
+let MomsProductCalc = document.getElementById('MomsProductCalc');
 let ChargesMonthCalc = document.getElementById('ChargesMonthCalc');
+let WishedProfitCalc = document.getElementById('WishedProfitCalc');
 //#endregion
 
 // Utility function to calculate profit
@@ -113,6 +116,42 @@ function calculateTotalMonthlyCharges() {
 }
 
 
+// Utility function to calculate the sale price needed to achieve a desired profit percentage
+function calculateWishedProfit(costPriceValue, shippingValue, adsDayValue, accountantCostValue, shopifyCostValue, bankCostValue, bookkeepingCostValue, otherCostValue, desiredProfitPercentage) {
+    // Calculate the total monthly charges
+    let totalMonthlyCharges = calculateTotalMonthlyCharges();
+
+    // Calculate the daily portion of the monthly costs
+    let dailyCharges = totalMonthlyCharges / 30;
+    
+    // Calculate the total daily expenses
+    let totalDailyExpenses = dailyCharges + parseFloat(adsDayValue);
+    console.log("totaldailyexpenses:", totalDailyExpenses);
+
+    // Calculate the desired profit per day
+    let desiredProfitPerDay = (desiredProfitPercentage / 100) * (costPriceValue + shippingValue);
+    console.log("desiredprofitperday:", desiredProfitPerDay);
+    
+
+    // Calculate the total cost per product for a day
+    let totalCostPerProduct = costPriceValue + shippingValue + totalDailyExpenses;
+
+    // Calculate the desired sale price per product
+    let desiredSalePricePerProduct = totalCostPerProduct * (1 + (desiredProfitPerDay / 100));
+
+    // Calculate Klarna fee
+    let klarnaFee = (desiredSalePricePerProduct * 0.0299) + 3.50;
+
+    // Calculate the final wished profit including Klarna fee
+    let wishedProfit = desiredSalePricePerProduct + klarnaFee;
+
+    return wishedProfit;
+}
+
+
+
+
+
 // Function to save a calculation to history
 function saveCalculation(inputValues, results) {
     let history = JSON.parse(localStorage.getItem('calculationHistory')) || [];
@@ -130,7 +169,9 @@ const inputLabels = {
     CostPrice: 'Inköpspris',
     SalePrice: 'Försäljningspris',
     Shipping: 'Frakt',
+    wishedProfit: 'Önskad vinst',
     'Ads-Day': 'Marknadsföringskostnad per dag',
+    dailySalesEstimate: 'Estimerad antal såld',
     TotalSale: 'Total försäljning/mån',
     TotalAd: 'Total marknadsföring/mån',
     AccountantCost: 'Revisorkostnad/mån',
@@ -147,7 +188,8 @@ const outputLabels = {
     dailyProfit: 'Vinst per dag',
     monthlyProfit: 'Vinst per månad',
     momsPerProduct: 'Moms per produkt',
-    totalMonthlyCharges: 'Totala månadskostnader'
+    totalMonthlyCharges: 'Totala månadskostnader',
+    wishedProfit: 'Önskad vinst'
 };
 
 
@@ -163,8 +205,8 @@ function displayHistoryTable() {
     const inputHeader = document.createElement('th');
     const outputHeader = document.createElement('th');
 
-    inputHeader.textContent = 'Input Values';
-    outputHeader.textContent = 'Output Values';
+    inputHeader.textContent = 'Angivna siffror';
+    outputHeader.textContent = 'Beräknat';
     headerRow.appendChild(inputHeader);
     headerRow.appendChild(outputHeader);
     table.appendChild(headerRow);
@@ -214,11 +256,19 @@ function calculateAndDisplay() {
     let salePriceValue = parseFloat(salePrice.value);
     let totalSaleValue = parseFloat(totalSale.value);
     let totalAdValue = parseFloat(totalAd.value);
+    let accountantCostValue = parseFloat(accountantCost.value);
+    let shopifyCostValue = parseFloat(shopifyCost.value);
+    let bankCostValue = parseFloat(bankCost.value);
+    let bookkeepingCostValue = parseFloat(bookkeepingCost.value);
+    let otherCostValue = parseFloat(otherCost.value);
+    let wishedProfitValue = parseFloat(wishedProfit.value);
 
 
     let profit = calculateProfit(salePriceValue, costPriceValue, shippingValue);
     let klarnaFee = calculateKlarnaFee(salePriceValue);
     let profitWithKlarna = calculateProfitWithKlarna(profit, klarnaFee);
+    let WishedProfit = calculateWishedProfit(costPriceValue, shippingValue, adsDay.value, accountantCost.value, shopifyCost.value, bankCost.value, bookkeepingCost.value, otherCost.value, parseFloat(wishedProfit.value));
+
     
     // Calculate the daily portion of the monthly costs
     let dailyMonthlyCharges = calculateTotalMonthlyCharges() /   30;
@@ -244,6 +294,8 @@ function calculateAndDisplay() {
     let dailyProfit = calculateDailyProfit(monthlyProfit, daysInMonth);
 
 
+    
+
 
     // Format the results with NaN handling to 0 instead
     let resultProduct = isNaN(productsForBreakEven) ? "0 st" : productsForBreakEven.toString() + " st";
@@ -253,6 +305,8 @@ function calculateAndDisplay() {
     let ProfitPerMonth = isNaN(monthlyProfit) ? "0 kr" : monthlyProfit.toFixed(2) + " kr";
     let MomsPerProduct = isNaN(momsValue) ? "0 kr" : momsValue.toFixed(2) + " kr";
     let totalMonthlyChargesFormatted = isNaN(totalMonthlyCharges) ? "0 kr" : totalMonthlyCharges.toFixed(2) + " kr";
+    let WishedProfitFormatted = isNaN(WishedProfit) ? "0 kr" : WishedProfit.toFixed(2) + " kr";
+
 
 
     // Display the result in the output field
@@ -263,6 +317,8 @@ function calculateAndDisplay() {
     ProfitMonthCalc.innerText = ProfitPerMonth;
     MomsProductCalc.innerText = MomsPerProduct;
     ChargesMonthCalc.innerText = totalMonthlyChargesFormatted;
+    WishedProfitCalc.innerText = WishedProfitFormatted;
+
 
     // Log to the console for debugging
 
@@ -277,6 +333,8 @@ function calculateAndDisplay() {
     console.log("Moms Per Product:", MomsPerProduct);
     console.log("Monthly Charges:", totalMonthlyChargesFormatted);
     console.log("min Sales Value:", minSalesValue);
+    console.log("wished profit formatted:", WishedProfitFormatted);
+    console.log("klarna fee:", klarnaFee);
 }
 
 
@@ -336,6 +394,7 @@ costPrice.addEventListener('change', calculateAndDisplay);
 salePrice.addEventListener('change', calculateAndDisplay);
 shipping.addEventListener('change', calculateAndDisplay);
 adsDay.addEventListener('change', calculateAndDisplay);
+dailySalesEstimate.addEventListener('change', calculateAndDisplay);
 totalSale.addEventListener('change', calculateAndDisplay);
 totalAd.addEventListener('change', calculateAndDisplay);
 accountantCost.addEventListener('change', calculateAndDisplay);
@@ -343,6 +402,8 @@ shopifyCost.addEventListener('change', calculateAndDisplay);
 bankCost.addEventListener('change', calculateAndDisplay);
 bookkeepingCost.addEventListener('change', calculateAndDisplay);
 otherCost.addEventListener('change', calculateAndDisplay);
+wishedProfit.addEventListener('change', calculateAndDisplay);
+
 
 // Initial calculation
 calculateAndDisplay();
